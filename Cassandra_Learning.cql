@@ -39,5 +39,5 @@ cqlsh:system> select * from system.schema_columns WHERE keyspace_name='system' A
 (9 rows)
 
 
-
+//counting number of rows
 
