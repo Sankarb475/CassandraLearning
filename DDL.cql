@@ -16,6 +16,8 @@ nodetool drain
 CREATE KEYSPACE Dummy
 WITH replication = {'class':'SimpleStrategy', 'replication_factor' : 3};
 
+--dropping keyspace 
+drop KEYSPACE dummy
 
 --creating column family "AdultTable"
 CREATE TABLE AdultTable(
