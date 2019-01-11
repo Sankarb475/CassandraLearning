@@ -30,4 +30,3 @@ col1 and col2
 col1 and col2 and col10
 col1 and col2 and col10 and col 4
 */
-
