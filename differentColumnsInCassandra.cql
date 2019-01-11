@@ -162,4 +162,13 @@ PRIMARY KEY ((a, b), c): The composite partition key is (a, b), the clustering k
 PRIMARY KEY ((a, b), c, d): The composite partition key is (a, b), the composite clustering key is (c, d).
 */
 
+--we can use ordering on the clustering keys while defining the table::
+
+CREATE TABLE timeseries (
+  event_type text,
+  insertion_time timestamp,
+  event blob,
+  PRIMARY KEY (event_type, insertion_time)
+)
+WITH CLUSTERING ORDER BY (insertion_time DESC);
 
