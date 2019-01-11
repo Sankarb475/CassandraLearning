@@ -43,5 +43,5 @@ cqlsh:system> select * from system.schema_columns WHERE keyspace_name='system' A
 
 SELECT COUNT(*) FROM adulttable2;
 
-./cqlsh -e "copy dummy.adulttable2 (age) to '/dev/null'" | sed -n 5p | sed 's/ .*//'
+./cqlsh -e "copy keyspaceName.columnName (age) to '/dev/null'" | sed -n 5p | sed 's/ .*//'
 
