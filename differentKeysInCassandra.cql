@@ -124,30 +124,6 @@ CREATE TABLE dummy.adultdata (
 --you can see the clustering key has started with Points1
 
 /*
-Query based on where clause is a "thing" to understand in cassandra otherwise you would many times end up getting error in where
-clause.
-
-the partition key is the minimum-specifier needed to perform a query using a where clause. we can query based on all key 
-(both partition and clustering) as well.
-*/
-
-
-/*
-If you have a composite partition key, like the following ::
-
-PRIMARY KEY((col1, col2), col10, col4))
-You can perform query only by passing at least both col1 and col2, these are the 2 columns that define the partition key. 
-The "general" rule to make query is you have to pass at least all partition key columns, then you can add optionally each 
-clustering key in the order they're set.
-
-so the valid queries are (excluding secondary indexes)::
-col1 and col2
-col1 and col2 and col10
-col1 and col2 and col10 and col 4
-*/
-
-
-/*
 A primary key uniquely identifies a row.
 A composite key is a key formed from multiple columns.
 A partition key is the primary lookup to find a set of rows, i.e. a partition.
