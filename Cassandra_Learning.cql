@@ -39,5 +39,9 @@ cqlsh:system> select * from system.schema_columns WHERE keyspace_name='system' A
 (9 rows)
 
 
-//counting number of rows
+--counting number of rows
+
+SELECT COUNT(*) FROM adulttable2;
+
+./cqlsh -e "copy dummy.adulttable2 (age) to '/dev/null'" | sed -n 5p | sed 's/ .*//'
 
