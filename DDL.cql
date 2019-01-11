@@ -90,3 +90,49 @@ country,
 salaryType) FROM '/Users/sankar.biswas/Desktop/hello.txt'
 WITH DELIMITER = ',' AND HEADER = FALSE;
 
+--adding WITH COMPACT STORAGE while defining a table will not let you create a table having more than one column not part
+--of primary key of that table.
+
+--so the following will not work, will throw an error instead::
+CREATE TABLE AdultTable2(
+Age int,
+Employer text,
+Salary int,
+education text,
+educationYear int,
+maritalStatus text,
+jobdesignation text,
+familyStatus text,
+colour text,
+gender text,
+Points1 int,
+Points2 int,
+Points3 int,
+country text,
+salaryType text,
+PRIMARY KEY (Age,Employer,Salary,education,educationYear)
+) WITH COMPACT STORAGE;
+    
+ --but this will work 
+CREATE TABLE AdultTable2(
+Age int,
+Employer text,
+Salary int,
+education text,
+educationYear int,
+maritalStatus text,
+jobdesignation text,
+familyStatus text,
+colour text,
+gender text,
+Points1 int,
+Points2 int,
+Points3 int,
+country text,
+salaryType text,
+PRIMARY KEY (Age,Employer,Salary,education,educationYear,Points1,Points2,Points3,salaryType,gender,jobdesignation,maritalStatus,country,colour)
+) WITH COMPACT STORAGE;
+
+--A compact table that uses a compound primary key must define at least one clustering column. 
+--Columns cannot be added nor removed after creation of a compact table.
+
