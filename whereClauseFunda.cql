@@ -1,0 +1,1 @@
+--Using where clause is not as easy as it is in any other databases.
