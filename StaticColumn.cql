@@ -45,3 +45,19 @@ cqlsh:test> select * from teststatic ;
   PK2 |     1 | Static value should not change PK2
   PK1 |     0 |     Static value should not change
   PK1 |     1 |     Static value should not change
+
+
+cqlsh:test> INSERT INTO teststatic (name, random, value) VALUES ('PK2','this is Static value should not change PK2',2);
+
+--again the last last inserted row's random value with PK as "PK2" will be overwritten
+
+cqlsh:test> select * from teststatic ;
+
+ name | value | random
+------+-------+--------------------------------------------
+  PK2 |     1 | this is Static value should not change PK2
+  PK2 |     2 | this is Static value should not change PK2
+  PK1 |     0 |             Static value should not change
+  PK1 |     1 |             Static value should not change
+  
+  
