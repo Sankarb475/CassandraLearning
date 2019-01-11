@@ -1,8 +1,3 @@
-/*
-In Cassandra, you need to build your data model to match your query patterns. This sometimes means duplicating your 
-data into additional tables, to attain the desired level of query flexibility.
-*/
-
 --creating keyspace "Dummy"
 
 CREATE KEYSPACE Dummy
