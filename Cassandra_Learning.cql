@@ -1,5 +1,4 @@
 --Finding the details of the columns a columnfamily.
-
 --columnFamily metadata gets stored in the keyspace "system" and columnFamily "schema_columns"
 
 cqlsh:> use system;
@@ -40,8 +39,70 @@ cqlsh:system> select * from system.schema_columns WHERE keyspace_name='system' A
 
 
 --counting number of rows
-
 SELECT COUNT(*) FROM adulttable2;
 
 ./cqlsh -e "copy keyspaceName.columnName (age) to '/dev/null'" | sed -n 5p | sed 's/ .*//'
+
+
+--Cassandra GROUP BY
+/*
+Group by is currently only supported on the columns of the PRIMARY KEY and
+Group by currently only support groups of columns following their declared order in the PRIMARY KEY
+
+that is if we have a PRIMARY KEY ((a,b),c,d)
+
+group by valid combinations :
+a,b
+a,b,c
+a,b,c,d
+
+and the rest combinations are invalid
+*/
+
+cqlsh:datatable> CREATE TABLE groupBy(
+             ... Name text,
+             ... ID int,
+             ... age int,
+             ... country text,
+             ... gender text,
+             ... primary key ((ID,country),gender,age));
+             
+INSERT INTO groupby (id, country ,gender,age,name) VALUES ( 1,'US','Male',23,'Sankar');
+INSERT INTO groupby (id, country ,gender,age,name) VALUES ( 2,'India','Male',28,'Shibu');
+INSERT INTO groupby (id, country ,gender,age,name) VALUES ( 3,'India','Female',28,'Sudebi');
+INSERT INTO groupby (id, country ,gender,age,name) VALUES ( 4,'India','Male',24,'Samarth');
+INSERT INTO groupby (id, country ,gender,age,name) VALUES ( 5,'US','Male',29,'Sam');
+
+cqlsh:datatable> INSERT INTO groupby (id, country ,gender,age,name) VALUES ( 5,'US','Male',29,'Sam');
+cqlsh:datatable> select * from groupby ;
+
+ id | country | gender | age | name
+----+---------+--------+-----+---------
+  3 |   India | Female |  28 |  Sudebi
+  2 |   India |   Male |  28 |   Shibu
+  4 |   India |   Male |  24 | Samarth
+  5 |      US |   Male |  29 |     Sam
+  1 |      US |   Male |  23 |  Sankar
+
+--all the primary key has to be present in the group by columns
+cqlsh:datatable> select country, avg(age) from groupby GROUP BY id;
+InvalidRequest: Error from server: code=2200 [Invalid query] message="Group by is not supported on only a part of the partition key"
+
+
+--only clustering column wouldnt work 
+cqlsh:datatable> select country, avg(age) from groupby GROUP BY age;
+InvalidRequest: Error from server: code=2200 [Invalid query] message="Group by currently only support groups of columns following their declared order in the PRIMARY KEY"
+
+--primary key "country" is missing
+cqlsh:datatable> select country, avg(age) from groupby GROUP BY id,gender;
+InvalidRequest: Error from server: code=2200 [Invalid query] message="Group by currently only support groups of columns following their declared order in the PRIMARY KEY"
+
+--clustering column has to be present in their declared order that is "gender" then after "age"
+cqlsh:datatable> select id, avg(age) from groupby GROUP BY id,country,age;
+InvalidRequest: Error from server: code=2200 [Invalid query] message="Group by currently only support groups of columns following their declared order in the PRIMARY KEY"
+
+
+--Cassandra Order by
+
+
 
