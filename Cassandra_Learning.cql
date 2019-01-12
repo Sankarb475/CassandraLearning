@@ -103,6 +103,32 @@ InvalidRequest: Error from server: code=2200 [Invalid query] message="Group by c
 
 
 --Cassandra Order by
+/*
+Order by is currently only supported on the clustered columns of the PRIMARY KEY and when the partition key is restricted by 
+an Equality or an IN operator in where clause.
+
+That is if you have your primary key defined like this :
+
+PRIMARY KEY ((a,b),c,d)
+Then you will be able to use the ORDER BY when & only when your query has :
+
+a where clause with all the primary key restricted either by an equality operator (=) or an IN operator such as :
+*/
+
+SELECT * FROM groupby WHERE id = 1 AND country = 'India' ORDER BY gender,age;
+
+SELECT * FROM groupby WHERE id = 1 AND country = 'India' ORDER BY gender;
+
+--These two query are the only valid ones.
+--Also this query would not work :
+
+SELECT * FROM groupby WHERE id = 1 AND country = 'India' ORDER BY age,gender;
+
+--because order by currently only support the ordering of columns following their declared order in the PRIMARY KEY that is in 
+--primary key definition c has been declared before d and the query violates the ordering by placing d first.
+
+
+--Cassandra "DISTINCT"
 
 
 
