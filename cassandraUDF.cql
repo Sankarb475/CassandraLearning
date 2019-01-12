@@ -4,7 +4,14 @@ often when working with cassandra you will find the need of specific function wh
 user defined function(UDF)
 */
 
---lets try to create a trim() function in cassandra
+--before getting into UDF or UDA, we need to set one property true in cassandra config file that is cassandra.yaml:
+~cassandra/conf/cassandra.yaml
+
+--go to the above path and set the following property from "false" to "true"
+
+enable_user_defined_functions: true
+
+--now lets try to create a trim() function in cassandra
 
 CREATE OR REPLACE FUNCTION trim (input text) CALLED ON NULL INPUT RETURNS text 
 LANGUAGE java AS 
