@@ -134,3 +134,6 @@ SELECT distinct age FROM groupby ;   --this would throw the above mentioned erro
 
 --SELECT DISTINCT queries must request all the partition key columns
 SELECT distinct id FROM groupby ;
+
+
+--Cassandra Secondary indexes
