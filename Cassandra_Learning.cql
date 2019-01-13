@@ -129,6 +129,8 @@ SELECT * FROM groupby WHERE id = 1 AND country = 'India' ORDER BY age,gender;
 
 
 --Cassandra "DISTINCT"
+--SELECT DISTINCT queries must only request partition key columns and/or static columns 
+SELECT distinct age FROM groupby ;   --this would throw the above mentioned error
 
-
-
+--SELECT DISTINCT queries must request all the partition key columns
+SELECT distinct id FROM groupby ;
