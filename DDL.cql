@@ -121,4 +121,9 @@ PRIMARY KEY (Age,Employer,Salary,education,educationYear,Points1,Points2,Points3
 --Columns cannot be added nor removed after creation of a compact table.
 
 
+-- deleting all the rows from a cassandra table which is a DDL, cant do a revert on this
+
+TRUNCATE keyspace_name.table_name;
+
+
 
