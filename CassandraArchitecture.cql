@@ -1,6 +1,9 @@
 Cassandra is a column-oriented NoSQL database, popular for its high performance writability. It can also be considered as 
 a key-value NoSQL database. 
 
+why it is column-oriented ?
+==> 
+
 Cassandra follows "eventually consistent", that is eventually the database will be consistent.
 
 Cassandra supports ACID property(Atomicity, Consistency, Isolation, Durability).
@@ -38,8 +41,24 @@ number of Cassandra nodes in the cluster.
 the keyspace details of my project cassandra database::
 @cqlsh> DESCRIBE KEYSPACE itunes_eventing_core;
 
-CREATE KEYSPACE itunes_eventing_core WITH replication = {'class': 'NetworkTopologyStrategy', 'PV': '3', 'ST': '3'}  
+CREATE KEYSPACE itunes_eventing_core WITH replication = {'class': 'NetworkTopologyStrategy', 'XXX': '3', 'YYY': '3'}  
 AND durable_writes = true;
+
+==> that is for XXX data center the replication factor would be 3 and for YYY 3 as well.
+
+durable_writes ==> Durable Writes provides a means to instruct Cassandra whether to use "commitlog" for updates on the current 
+                   KeySpace or not. This option is not mandatory. The default value for durable writes is TRUE.
+                   
+                   
+'NetworkTopologyStrategy' ==> Using this option, you can set the replication factor for each data-center independently.
+
+The cassandra version we are using in our project :: 2.1.18.8
+
+@cqlsh> select peer, release_version from system.peers;
+
+ peer           | release_version
+----------------+-----------------
+  10.139.103.86 |        2.1.18.8
 
 
 
