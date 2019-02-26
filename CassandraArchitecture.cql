@@ -73,6 +73,69 @@ The cassandra version we are using in our project :: 2.1.18.8
   10.139.103.86 |        2.1.18.8
 
 
+--Data Replication in Cassandra
+SimpleStrategy ::
+Use only for a single datacenter and one rack. SimpleStrategy places the first replica on a node determined by the partitioner. 
+Additional replicas are placed on the next nodes clockwise in the ring without considering topology 
+(rack or datacenter location).
+
+NetworkTopologyStrategy ::
+Use NetworkTopologyStrategy when you have (or plan to have) your cluster deployed across multiple datacenters. This strategy 
+specifies how many replicas you want in each datacenter. NetworkTopologyStrategy places replicas in the same datacenter by 
+walking the ring clockwise until reaching the first node in another rack. NetworkTopologyStrategy attempts to place replicas 
+on distinct racks because nodes in the same rack (or similar physical grouping) often fail at the same time due to power, 
+cooling, or network issues.
+
+--Cassandra Replication Factor and Consistency Level
+The Cassandra consistency level is defined as the minimum number of Cassandra nodes that must acknowledge a read or write 
+operation before the operation can be considered successful. Different consistency levels can be assigned to different Edge 
+keyspaces.
+LOCAL_QUORUM = (replication_factor/2) + 1  ==> is the minimum number of nodes that has to respond on a read/write request 
+operation for the operation to succeed.
+If a keyspace used the Cassandra QUORUM value as the consistency level, read/write operations would have to be validated 
+across all data centers.
+
+cqlsh> CONSISTENCY 
+Current consistency level is ONE.
+
+cqlsh> CONSISTENCY QUORUM 
+Consistency level set to QUORUM.
+
+cqlsh> CONSISTENCY
+Current consistency level is QUORUM.
+
+cqlsh> CONSISTENCY LOCAL_QUORUM 
+Consistency level set to LOCAL_QUORUM.
+
+-- Key components for configuring Cassandra
+Gossip ::
+Gossip is a peer-to-peer communication protocol in which nodes periodically exchange state information about themselves and 
+about other nodes they know about. The gossip process runs every second and exchanges state messages with up to three other 
+nodes in the cluster. The nodes exchange information about themselves and about the other nodes that they have gossiped about, 
+so all nodes quickly learn about all other nodes in the cluster.
+
+Partitioner ::
+A partitioner determines which node will receive the first replica of a piece of data, and how to distribute other replicas 
+across other nodes in the cluster. Each row of data is uniquely identified by a primary key, which may be the same as its 
+partition key, but which may also include other clustering columns. A partitioner is a hash function that derives a token from 
+the primary key of a row. The partitioner uses the token value to determine which nodes in the cluster receive the replicas of 
+that row. The Murmur3Partitioner is the default partitioning strategy for new Cassandra clusters and the right choice for new 
+clusters in almost all cases.
+
+Cassandra offers the following partitioners that can be set in the cassandra.yaml file.
+Murmur3Partitioner (default): uniformly distributes data across the cluster based on MurmurHash hash values. The 
+Murmur3Partitioner uses the MurmurHash function. This hashing function creates a 64-bit hash value of the partition key. 
+The possible range of hash values is from -2^63 to +2^63-1.
+
+RandomPartitioner: uniformly distributes data across the cluster based on MD5 hash values.
+
+ByteOrderedPartitioner: keeps an ordered distribution of data lexically by key bytes
+
+Snitch ::
+A snitch defines groups of machines into datacenters and racks (the topology) that the replication strategy uses to place 
+replicas.
+
+
 
 
 
