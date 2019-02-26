@@ -2,8 +2,20 @@ Cassandra is a column-oriented NoSQL database, popular for its high performance 
 a key-value NoSQL database. 
 
 why it is column-oriented ?
-==> 
+==> a key-value NoSQL database, the value of which is a row of columns. The model in Cassandra is that rows contain columns 
+To access the smallest unit of data (a column) you have to specify first the row name (key), then the column name. 
 
+
+apple -> colour  weight  price variety
+         "red"   100     40    "Cox"
+
+orange -> colour    weight  price  origin
+          "orange"  120     50     "Spain"
+          
+          
+         
+--- There is no case-sensitivity concept in Cassandra. All the data is stored as byte[], so it's not even a String.         
+          
 Cassandra follows "eventually consistent", that is eventually the database will be consistent.
 
 Cassandra supports ACID property(Atomicity, Consistency, Isolation, Durability).
