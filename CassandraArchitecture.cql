@@ -36,6 +36,7 @@ Data center ==> It is a collection of related nodes.
 Cluster     ==> A cluster is a component that contains one or more data centers.
 
 Commit log  ==> The commit log is a crash-recovery mechanism in Cassandra. Every write operation is written to the commit log.
+                Data in the commit log is purged after its corresponding data in the memtable is flushed to an SSTable.
 
 Mem-table   ==> A mem-table is a memory-resident data structure. After commit log, the data will be written to the mem-table. 
               Sometimes, for a single-column family, there will be multiple mem-tables.
@@ -44,6 +45,8 @@ SSTable     ==> It is a disk file to which the data is flushed from the mem-tabl
 
 Bloom filter ==> These are nothing but quick, nondeterministic, algorithms for testing whether an element is a member of a set.
                  It is a special kind of cache. Bloom filters are accessed after every query.
+                 
+** Memtables and SSTables are maintained per table. SSTables are immutable, not written to again after the memtable is flushed.              
                  
                  
 Cassandra stores data replicas on multiple nodes to ensure reliability and fault tolerance. The replication strategy for each 
@@ -95,6 +98,11 @@ operation for the operation to succeed.
 If a keyspace used the Cassandra QUORUM value as the consistency level, read/write operations would have to be validated 
 across all data centers.
 
+cqlsh> CONSISTENCY ANY
+==> A write must be written to at least one node. The write operation would stil be successful if all the replica nodes are 
+down after a hinted handoff has been written. If all replica nodes are down at write time, an ANY write is not readable until 
+the replica nodes for that partition have recovered.
+
 cqlsh> CONSISTENCY 
 Current consistency level is ONE.
 
@@ -135,6 +143,35 @@ Snitch ::
 A snitch defines groups of machines into datacenters and racks (the topology) that the replication strategy uses to place 
 replicas.
 
+
+--Data storage life cycle in cassandra
+1) Logging data in the commit log
+2) Writing data to the memtable
+3) Flushing data from the memtable
+4) Storing data on disk in SSTables
+5) Compaction
+
+*****Internally, a Cassandra index is a data partition. Each Node in Cassandra indexes its own data whatever data it stores 
+to make the retrieval process faster.
+
+*****Cassandra treats each new row as an upsert: if the new row has the same primary key as that of an existing row, Cassandra 
+processes it as an update to the existing row.
+
+--deletes in cassandra
+When you delete a row from Cassandra, it does not try to find the row by scanning the data and then delete it like RDBMS. What
+it does is it marks that row as tombstone. After data is marked with a tombstone, the data is automatically removed during the 
+normal compaction process. Deleted data can reappear if you do not run node repair routinely.
+
+--hinted handoff writes
+cassandra consistency has to be set as ANY to enable hinted handoff. 
+During a write if replica nodes are down, hinted handoff has been taken so that when they get back up it will get written.
+A hint indicates that a write needs to be replayed to one or more unavailable nodes. The hint consists of:
+The location of the replica that is down
+Version metadata
+The actual data being written
+
+By default, hints are saved for three hours after a replica fails because if the replica is down longer than that, it is likely 
+permanently dead. You can configure this interval of time using the max_hint_window_in_ms property in the cassandra.yaml file
 
 
 
