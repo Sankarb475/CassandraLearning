@@ -174,5 +174,19 @@ By default, hints are saved for three hours after a replica fails because if the
 permanently dead. You can configure this interval of time using the max_hint_window_in_ms property in the cassandra.yaml file
 
 
+-- Cassandra Read
+To satisfy a read, Cassandra must combine results from the active memtable and potentially mutliple SSTables.
 
+First, Cassandra checks the Bloom filter. Each SSTable has a Bloom filter associated with it that checks the probability of 
+having any data for the requested partition in the SSTable before doing any disk I/O. If Bloom filter does not rule out the
+SSTable, Cassandra checks the partition key cache and try to find the index and fetches the compressed output from disk.
+
+-- A Cassandra column family has the following attributes −
+
+keys_cached − It represents the number of locations to keep cached per SSTable.
+
+rows_cached − It represents the number of rows whose entire contents will be cached in memory, because those are being fetched
+              by client frequently.
+
+preload_row_cache − It specifies whether you want to pre-populate the row cache.
 
