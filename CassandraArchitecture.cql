@@ -217,10 +217,51 @@ If you are running a query restricting the clustering column, the query would no
 very inefficient process which will end up taking a lot of resources, but if you mention "ALLOW FILTERING" that means you are
 ok with the inefficiency and thus will get executed successfully.
 
+Cassandra distributes the partition accross the nodes using the selected partitioner. As only the ByteOrderedPartitioner keeps
+an ordered distribution of data Cassandra does not support >, >=, <= and < operator directly on the partition key. Because, if
+Cassandra has to allow >, <, >= then the cassandra has to scan all the data based on the primary key which will be an 
+inefficient processing.
 
+If you use a ByteOrderedPartitioner, you will then be able to perform some range queries over multiple partitions. You should 
+nevertheless be careful. Using a ByteOrderedPartitioner is not recommended as it can result in unbalanced clusters.
 
+Cassandra allows you to use the >, >=, <= and < operator on the partition key through the use of the token function.
 
+The clustering columns has to be restricted in a sequential order, the way the clustering columns has been defined in the 
+creation of the table otherwise Cassandra will reject the query as it has to scan the entire partition to find the requested 
+data, which is inefficient.
 
+*** When you are restricting more than one clustering column in a single select query, only the last clustering column can
+take >, < or >= etc restrictions. example ::
+
+cqlsh:test> CREATE TABLE dum (id int, age int, role int, primary key(id,age,role));
+                                                                     
+cqlsh:test> INSERT INTO dum (id, age, role) VALUES ( 1, 23, 3);
+                                                                     
+cqlsh:test> INSERT INTO dum (id, age, role) VALUES ( 2, 23, 4);
+                                                                     
+cqlsh:test> INSERT INTO dum (id, age, role) VALUES ( 3, 23, 5); 
+
+-- in the below query age clustering column age has been restricted with >                                                                     
+cqlsh:test> SELECT * FROM dum where id in (1,2) and age > 21;
+
+ id | age | role
+----+-----+------
+  1 |  23 |    3
+  2 |  23 |    4
+
+-- here it is not working because only last clustering column role can take > restriction.
+cqlsh:test> SELECT * FROM dum where id in (1,2) and age > 21 and role = 3;
+InvalidRequest: code=2200 [Invalid query] message="PRIMARY KEY column "role" cannot be restricted (preceding column "age" is 
+restricted by a non-EQ relation)"
+
+ --this query is working because role is restricted.                                                                    
+cqlsh:test> SELECT * FROM dum where id in (1,2) and age =23 and role>=3;
+
+ id | age | role
+----+-----+------
+  1 |  23 |    3
+  2 |  23 |    4
 
 
 
