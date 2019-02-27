@@ -22,3 +22,16 @@ return ltrim;'
 --this is an example of UDF, now lets use it, the below query will return employer column values trimming the space
 
 SELECT trim(employer) AS Employer FROM adultdata limit 5;
+
+
+-- User-defined type (UDT)
+User-defined types (UDTs) can attach multiple data fields, each named and typed, to a single column. Once created, 
+UDTs may be used to define a column in a table.
+
+cqlsh:test> CREATE TYPE basic_info ( birthday timestamp, nationality text, weight text, height text );
+cqlsh:test> CREATE TABLE cyclist_stats ( id uuid PRIMARY KEY, lastname text, basics FROZEN<basic_info>); 
+
+
+cqlsh:test> CREATE TYPE flagtype (data map<text,text>,working text);
+
+cqlsh:test> CREATE TABLE table1 (abc text, hello text, flag frozen<flagtype>, PRIMARY KEY (abc));
