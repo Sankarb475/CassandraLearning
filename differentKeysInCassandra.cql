@@ -6,6 +6,10 @@ composite key
 clustering key
 */
 
+-- Partition Key: Is the part of a record (one or more columns) that is used to create its hash that is then used to 
+select the node(s) that will store it. so partition key is the key which creates the hash value based on which the row gets
+stored.
+
 /*
 The primary key is a general concept to indicate one or more columns used to retrieve data from a Table. They alltogether
 represents each row of the column uniquely.
