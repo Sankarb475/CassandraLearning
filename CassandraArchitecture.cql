@@ -264,7 +264,12 @@ cqlsh:test> SELECT * FROM dum where id in (1,2) and age =23 and role>=3;
   2 |  23 |    4
 
 
-
+The data are internally organised into something which one can compare to HashMap[X, SortedMap[Y, Z]]. The key of the outer 
+map is a partition key value and the key of the inner map is a kind of concatenation of all clustering columns values and a 
+name of some regular column.
+                                                                                               
+-- Secondary index
+Direct queries on secondary indices support only =, CONTAINS or CONTAINS KEY restrictions.                                                                                               
 
 
 
