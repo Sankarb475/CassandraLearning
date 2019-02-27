@@ -36,12 +36,14 @@ Data center ==> It is a collection of related nodes.
 Cluster     ==> A cluster is a component that contains one or more data centers.
 
 Commit log  ==> The commit log is a crash-recovery mechanism in Cassandra. Every write operation is written to the commit log.
-                Data in the commit log is purged after its corresponding data in the memtable is flushed to an SSTable.
+                Data in the commit log is purged after its corresponding data in the memtable is flushed to an SSTable. It is 
+                part of disk memory.
 
 Mem-table   ==> A mem-table is a memory-resident data structure. After commit log, the data will be written to the mem-table. 
               Sometimes, for a single-column family, there will be multiple mem-tables.
 
 SSTable     ==> It is a disk file to which the data is flushed from the mem-table when its contents reach a threshold value.
+                Sorted Strings Table (borrowed from google) is a file of key/value string pairs, sorted by keys.
 
 Bloom filter ==> These are nothing but quick, nondeterministic, algorithms for testing whether an element is a member of a set.
                  It is a special kind of cache. Bloom filters are accessed after every query.
@@ -189,4 +191,40 @@ rows_cached − It represents the number of rows whose entire contents will be c
               by client frequently.
 
 preload_row_cache − It specifies whether you want to pre-populate the row cache.
+
+
+
+--The commit log receives every write made to a Cassandra node, and these durable writes survive permanently even if power 
+fails on a node. Data in the commit log is purged after its corresponding data in the memtable is flushed to an SSTable on 
+disk. You can manually flush a table using nodetool flush or nodetool drain to SSTable.
+
+--Storing data on disk in SSTables--
+Memtables and SSTables are maintained per table. The commit log is shared among tables. SSTables are immutable, not written to 
+again after the memtable is flushed.
+
+The partition key columns are the first part of primary key and their role is to spread data evenly around the cluster. Rows 
+will be spread around the cluster based on the hash of the partition keys.
+The clustering key columns are used to cluster the data of a partition, allowing a very efficient retrival of rows.
+Due to the differences in the role that they are playing, partition key, clustering and normal columns support different sets 
+of restrictions within the WHERE clause. Futhermore, those sets of restrictions differ depending of the type of query: SELECT, 
+UPDATE or DELETE.
+
+Cassandra will require that you either restrict all the partition key columns, or none of them unless the query can use a 
+secondary index. The reason why is that Cassandra needs all the partition key columns to be able to compute the hash that 
+will allow it to locate the nodes containing the partition.
+
+If you are running a query restricting the clustering column, the query would not work because Cassandra knows it would be a
+very inefficient process which will end up taking a lot of resources, but if you mention "ALLOW FILTERING" that means you are
+ok with the inefficiency and thus will get executed successfully.
+
+
+
+
+
+
+
+
+
+
+
 
