@@ -125,5 +125,6 @@ PRIMARY KEY (Age,Employer,Salary,education,educationYear,Points1,Points2,Points3
 
 TRUNCATE keyspace_name.table_name;
 
+cqlsh:test> COPY cycling.cyclist_catgory FROM 'cyclist_category.csv' WITH DELIMITER='|' AND HEADER=TRUE
 
 
