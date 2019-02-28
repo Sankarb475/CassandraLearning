@@ -305,7 +305,10 @@ cqlsh:test> SELECT * FROM dumdum where name = 'Sankar' and age > 24 ALLOW FILTER
  id | age | name | role
 ----+-----+------+------
 
-                                                                                               
+***                                                                                               
+In UPDATE and DELETE statements all the primary key columns must be restricted and the only allowed restrictions are:
+the single-column = on any partition key or clustering columns
+the single-column IN restriction on the last partition key column                                                                                               
                                                                                                
                                                                                                
                                                                                                
