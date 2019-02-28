@@ -270,7 +270,48 @@ name of some regular column.
                                                                                                
 -- Secondary index
 Direct queries on secondary indices support only =, CONTAINS or CONTAINS KEY restrictions.                                                                                               
+The CONTAINS restriction can only be used on collection types. The CONTAINS KEY restriction can only be used on map for which 
+the keys have been indexed.
 
+***** possible to use restriction in normal column 
+we can also use restriction in the columns which neither are part of primary key nor clustering key and also not a secondary
+index, only when we have a secondary index put on in one of the column of the table and we are restricting the normal column
+along with the secondary indexed column.
+                                                                                              
+cqlsh:test> CREATE TABLE dumdum(id int PRIMARY KEY, name text, age int, role int);
+                                                                                               
+cqlsh:test> CREATE INDEX on dumdum (name);
+                                                                                               
+cqlsh:test> select * from dumdum ;
+
+ id | age | name   | role
+----+-----+--------+------
+  1 |  23 |   Puja |    1
+  2 |  24 | Sankar |    2
+  3 |  23 |   Arya |    3
+
+--age is a normal column but we are using restriction on it as well with the help of the secondary index, we can not use
+ > or < or similar restriction on the secondary index.
+                                                                                               
+cqlsh:test> SELECT * FROM dumdum where name = 'Sankar' and age = 24 ALLOW FILTERING ;
+
+ id | age | name   | role
+----+-----+--------+------
+  2 |  24 | Sankar |    2
+
+(1 rows)
+cqlsh:test> SELECT * FROM dumdum where name = 'Sankar' and age > 24 ALLOW FILTERING ;
+
+ id | age | name | role
+----+-----+------+------
+
+                                                                                               
+                                                                                               
+                                                                                               
+                                                                                               
+                                                                                               
+                                                                                               
+                                                                                               
 
 
 
