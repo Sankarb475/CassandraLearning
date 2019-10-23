@@ -154,7 +154,9 @@ replicas.
 5) Compaction
 
 *****Internally, a Cassandra index is a data partition. Each Node in Cassandra indexes its own data whatever data it stores 
-to make the retrieval process faster.
+to make the retrieval process faster. for data query by indexed column, the requests has to be forwarded to all the nodes, waiting for 
+all the resonses, and then the results are merged and returned. So if you have many nodes, the query response slows down as more 
+machines are added to the cluster.
 
 *****Cassandra treats each new row as an upsert: if the new row has the same primary key as that of an existing row, Cassandra 
 processes it as an update to the existing row.
